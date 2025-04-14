@@ -3,14 +3,29 @@ include 'db.php';
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Fetch all rows from the dispatch table
-$result = pg_query($conn, "SELECT * FROM dispatch ORDER BY id ASC");
+// Check if search term is set
+$searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
+
+// Build the query with a WHERE clause if search term is present
+$query = "SELECT * FROM dispatch";
+if ($searchTerm != '') {
+    // Use LIKE for partial matching, with wildcards around the search term
+    $query .= " WHERE dispatch_number LIKE '%$searchTerm%' 
+                OR received_from LIKE '%$searchTerm%' 
+                OR subject LIKE '%$searchTerm%' 
+                OR signature LIKE '%$searchTerm%'";
+}
+$query .= " ORDER BY id ASC";
+
+// Fetch filtered results from the dispatch table
+$result = pg_query($conn, $query);
 
 if (!$result) {
     echo "An error occurred.\n";
     exit;
 }
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -23,10 +38,22 @@ if (!$result) {
         a.button { background: #4CAF50; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; }
         a.edit { background: #2196F3; }
         a.delete { background: #f44336; }
+        .search-container {
+            margin-bottom: 20px;
+        }
+        .search-container input {
+            padding: 8px;
+            width: 300px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
     </style>
 </head>
 <body>
     <h2>📄 Dispatch List</h2>
+    
+
+    <!-- Status Message -->
     <?php if (isset($_GET['status'])): ?>
     <div id="statusMessage" style="padding: 10px; border-radius: 6px; margin-bottom: 20px;
         <?php echo $_GET['status'] == 'success' ? 'background-color: #d4edda; color: #155724;' : 'background-color: #f8d7da; color: #721c24;'; ?>">
@@ -47,13 +74,19 @@ if (!$result) {
             }
         ?>
     </div>
-<?php endif; ?>
-
-
+    <?php endif; ?>
 
     <p><a href="create.php" class="button">+ Add New Dispatch</a></p>
     <a href="export.php" class="btn btn-success">Download Excel</a>
+    <!-- Search Form -->
+    <div class="search-container">
+        <form method="GET" action="">
+            <input type="text" name="search" value="<?php echo htmlspecialchars($searchTerm); ?>" placeholder="Search by Dispatch Number, Received From, Subject, or Signature">
+            <button type="submit">Search</button>
+        </form>
+    </div>
 
+    <!-- Table -->
     <table>
         <tr>
             <th>ID</th>
@@ -77,8 +110,10 @@ if (!$result) {
         </tr>
         <?php endwhile; ?>
     </table>
+
 </body>
 </html>
+
 <script>
     setTimeout(() => {
         const msg = document.getElementById('statusMessage');
@@ -90,4 +125,3 @@ if (!$result) {
         }
     }, 5000); // 5 seconds
 </script>
-<!--  -->
