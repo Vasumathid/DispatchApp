@@ -27,6 +27,30 @@ if (!$result) {
 </head>
 <body>
     <h2>📄 Dispatch List</h2>
+    <?php if (isset($_GET['status'])): ?>
+    <div id="statusMessage" style="padding: 10px; border-radius: 6px; margin-bottom: 20px;
+        <?php echo $_GET['status'] == 'success' ? 'background-color: #d4edda; color: #155724;' : 'background-color: #f8d7da; color: #721c24;'; ?>">
+        <?php
+            switch ($_GET['status']) {
+                case 'success':
+                    echo "✅ Entry updated successfully!";
+                    break;
+                case 'created':
+                    echo "✅ Entry created successfully!";
+                    break;
+                case 'deleted':
+                    echo "🗑️ Entry deleted successfully!";
+                    break;
+                case 'error':
+                    echo "❌ An error occurred.";
+                    break;
+            }
+        ?>
+    </div>
+<?php endif; ?>
+
+
+
     <p><a href="create.php" class="button">+ Add New Dispatch</a></p>
     <a href="export.php" class="btn btn-success">Download Excel</a>
 
@@ -55,3 +79,14 @@ if (!$result) {
     </table>
 </body>
 </html>
+<script>
+    setTimeout(() => {
+        const msg = document.getElementById('statusMessage');
+        if (msg) {
+            msg.style.transition = 'opacity 0.5s ease, transform 0.3s ease'; // Adding transform for a slight movement
+            msg.style.opacity = '0';
+            msg.style.transform = 'translateY(-10px)'; // Moving message upwards before fading out
+            setTimeout(() => msg.remove(), 800); // Remove from DOM after complete fade out
+        }
+    }, 5000); // 5 seconds
+</script>

@@ -43,6 +43,7 @@
 </head>
 <body>
     <h2>Add New Dispatch Entry</h2>
+
     <form method="POST" action="">
         <label>Dispatch Number:</label>
         <input type="text" name="dispatch_number" required>
@@ -84,11 +85,12 @@
         $result = pg_query($conn, $query);
 
         if ($result) {
-            echo "<p style='color:green;'>Dispatch entry added successfully!</p>";
+            header("Location: index.php?status=created");
+            exit;
         } else {
-            echo "<p style='color:red;'>Error: " . pg_last_error($conn) . "</p>";
+            echo "<p style='color:red;'>❌ Error: " . pg_last_error($conn) . "</p>";
         }
-
+        
         pg_close($conn);
     }
     ?>

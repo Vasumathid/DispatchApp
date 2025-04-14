@@ -97,10 +97,11 @@ if (!$data) {
         $result = pg_query_params($conn, $updateQuery, array($dispatch_number, $received_from, $subject, $signature, $id));
 
         if ($result) {
-            echo "<p style='color:green;'>✅ Entry updated successfully!</p>";
+            header("Location: index.php?status=updated");
+            exit;
         } else {
             echo "<p style='color:red;'>❌ Error: " . pg_last_error($conn) . "</p>";
-        }
+        }        
     }
 
     pg_close($conn);
