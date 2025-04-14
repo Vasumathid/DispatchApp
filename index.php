@@ -32,7 +32,7 @@ if (!$result) {
         <?php echo $_GET['status'] == 'success' ? 'background-color: #d4edda; color: #155724;' : 'background-color: #f8d7da; color: #721c24;'; ?>">
         <?php
             switch ($_GET['status']) {
-                case 'success':
+                case 'updated':
                     echo "✅ Entry updated successfully!";
                     break;
                 case 'created':
@@ -90,3 +90,4 @@ if (!$result) {
         }
     }, 5000); // 5 seconds
 </script>
+<!--  -->
